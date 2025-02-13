@@ -7,7 +7,7 @@ import API from "../../api";
 import { paginate } from "../../utils/paginate";
 import _ from "lodash";
 
-const Users = () => {
+const UsersList = () => {
   const [users, setUsers] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [professions, setProfessions] = useState();
@@ -111,4 +111,4 @@ const Users = () => {
   return "Loading...";
 };
 
-export default Users;
+export default UsersList;
