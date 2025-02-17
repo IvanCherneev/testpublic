@@ -1,9 +1,9 @@
 import React from "react";
-import Users from "../../layouts/users/Users";
+import Users from "./layouts/users/Users";
 import { Switch, Route, Redirect } from "react-router-dom/cjs/react-router-dom.min";
-import Login from "../../layouts/login/Login";
-import Main from "../../layouts/main/Main";
-import NavBar from "../navBar/NavBar";
+import Login from "./layouts/login/Login";
+import Main from "./layouts/main/Main";
+import NavBar from "./components/ui/navBar/NavBar";
 
 const App = () => {
   return (

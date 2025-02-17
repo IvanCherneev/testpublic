@@ -1,10 +1,8 @@
 import React from "react";
-import Bookmark from "../bookmark/Bookmark";
-// import TableHeader from "../tableHeader/TableHeader";
-// import TableBody from "../tableBody/TableBody";
-import Table from "../table/Table";
+import Bookmark from "../../common/bookmark/Bookmark";
+import Table /*, {TableBody, TableHeader} */ from "../../common/table";
 import PropTypes from "prop-types";
-import QualitiesList from "../qualitiesList/QualitiesList";
+import Qualities from "../qualities";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const UsersTable = ({ users, onSort, selectedSort, onToggleBookMark, onDelete }) => {
@@ -19,7 +17,7 @@ const UsersTable = ({ users, onSort, selectedSort, onToggleBookMark, onDelete })
     qualities: {
       name: "Качества",
       component: (user) => (
-        <QualitiesList qualities={user.qualities} />
+        <Qualities qualities={user.qualities} />
       ),
     },
     professions: { path: "profession.name", name: "Профессия" },
