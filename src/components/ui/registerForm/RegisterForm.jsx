@@ -3,9 +3,15 @@ import { validator } from "../../../utils/validator";
 import TextField from "../../common/form/textField/TextField";
 import API from "../../../api";
 import SelectField from "../../common/form/selectField/SelectField";
+import RadioField from "../../common/form/radioField/RadioField";
 
 const RegisterForm = () => {
-  const [data, setData] = useState({ email: "", password: "", profession: "" });
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+    profession: "",
+    sex: "male",
+  });
   const [errors, setErrors] = useState({});
   const [professions, setProfessions] = useState();
 
@@ -70,42 +76,57 @@ const RegisterForm = () => {
     console.log(errors);
   };
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <TextField
-        label="Электронная почта"
-        id="email"
-        name="email"
-        value={data.email}
-        onChange={handleChange}
-        error={errors.email}
-      />
-      <TextField
-        label="Пароль"
-        type="password"
-        id="password"
-        name="password"
-        value={data.password}
-        onChange={handleChange}
-        error={errors.password}
-      />
-      <SelectField
-        label="Выберите вашу профессию"
-        defaultOption="Choose..."
-        options={professions}
-        onChange={handleChange}
-        value={data.profession}
-        error={errors.profession}
-      />
-      <button
-        type="submit"
-        disabled={!isValid}
-        className="btn btn-primary w-100 mx-auto"
-      >
-        Submit
-      </button>
-    </form>
-  );
+  if (professions) {
+    return (
+      <form onSubmit={handleSubmit}>
+        <TextField
+          label="Электронная почта"
+          id="email"
+          name="email"
+          value={data.email}
+          onChange={handleChange}
+          error={errors.email}
+        />
+        <TextField
+          label="Пароль"
+          type="password"
+          id="password"
+          name="password"
+          value={data.password}
+          onChange={handleChange}
+          error={errors.password}
+          autocomplete="off"
+        />
+        <SelectField
+          label="Выберите вашу профессию"
+          defaultOption="Choose..."
+          options={professions}
+          onChange={handleChange}
+          value={data.profession}
+          error={errors.profession}
+        />
+        <RadioField
+          options={[
+            { name: "Male", value: "male" },
+            { name: "Female", value: "female" },
+            { name: "Other", value: "other" },
+          ]}
+          value={data.sex}
+          name="sex"
+          onChange={handleChange}
+        />
+        <button
+          type="submit"
+          disabled={!isValid}
+          className="btn btn-primary w-100 mx-auto"
+        >
+          Submit
+        </button>
+      </form>
+    );
+  } else {
+    return <p>Loading...</p>;
+  }
 };
 
 export default RegisterForm;

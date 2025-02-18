@@ -76,6 +76,7 @@ const LoginForm = () => {
         value={data.password}
         onChange={handleChange}
         error={errors.password}
+        autocomplete="off"
       />
       <button
         type="submit"

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 
-const TextField = ({ label, type, name, value, onChange, error }) => {
+const TextField = ({ label, type, name, value, onChange, error, autocomplete }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const getInputClasses = () => {
@@ -23,6 +23,7 @@ const TextField = ({ label, type, name, value, onChange, error }) => {
           value={value}
           onChange={onChange}
           className={getInputClasses()}
+          autoComplete={autocomplete}
         />
         {type === "password" && (
           <button
@@ -41,15 +42,17 @@ const TextField = ({ label, type, name, value, onChange, error }) => {
 
 TextField.defaultPages = {
   type: "text",
+  autocomplete: "on",
 };
 
 TextField.propTypes = {
   label: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
+  type: PropTypes.string,
   name: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  error: PropTypes.string.isRequired,
+  error: PropTypes.string,
+  autocomplete: PropTypes.string,
 };
 
 export default TextField;
