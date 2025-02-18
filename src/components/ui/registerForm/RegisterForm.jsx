@@ -4,6 +4,7 @@ import TextField from "../../common/form/textField/TextField";
 import API from "../../../api";
 import SelectField from "../../common/form/selectField/SelectField";
 import RadioField from "../../common/form/radioField/RadioField";
+import MultiSelectField from "../../common/form/multiSelectField/MultiSelectField";
 
 const RegisterForm = () => {
   const [data, setData] = useState({
@@ -11,15 +12,18 @@ const RegisterForm = () => {
     password: "",
     profession: "",
     sex: "male",
+    qualities: [],
   });
   const [errors, setErrors] = useState({});
   const [professions, setProfessions] = useState();
+  const [qualities, setQualities] = useState({});
 
   useEffect(() => {
     API.professions.fetchAll().then(data => setProfessions(data));
+    API.qualities.fetchAll().then(data => setQualities(data));
   });
 
-  const handleChange = ({ target }) => {
+  const handleChange = (target) => {
     setData(prevState => ({
       ...prevState,
       [target.name]: target.value,
@@ -76,7 +80,7 @@ const RegisterForm = () => {
     console.log(errors);
   };
 
-  if (professions) {
+  if (professions && qualities) {
     return (
       <form onSubmit={handleSubmit}>
         <TextField
@@ -114,6 +118,14 @@ const RegisterForm = () => {
           value={data.sex}
           name="sex"
           onChange={handleChange}
+          label="Выберите ваш пол"
+        />
+        <MultiSelectField
+          options={qualities}
+          onChange={handleChange}
+          name="qualities"
+          value={data.qualities}
+          label="Выберите ваши качества"
         />
         <button
           type="submit"
