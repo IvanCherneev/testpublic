@@ -110,6 +110,7 @@ const RegisterForm = () => {
         />
         <SelectField
           label="Выберите вашу профессию"
+          name="professions"
           defaultOption="Choose..."
           options={professions}
           onChange={handleChange}
@@ -131,7 +132,7 @@ const RegisterForm = () => {
           options={qualities}
           onChange={handleChange}
           name="qualities"
-          value={data.qualities}
+          defaultValue={data.qualities}
           label="Выберите ваши качества"
         />
         <CheckBoxField

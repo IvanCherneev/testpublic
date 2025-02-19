@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import TextField from "../../common/form/textField/TextField";
-// import { validator } from "../../../utils/validator";
 import CheckBoxField from "../../common/form/checkBoxField/checkBoxField";
 import * as yup from "yup";
 
@@ -28,39 +27,11 @@ const LoginForm = () => {
     email: yup.string().required("Электронная почта обязательна для заполнения").email("Email введен некорректно"),
   });
 
-  /* const validatorConfig = {
-    email: {
-      isRequired: {
-        message: "Электронная почта обязательна для заполнения",
-      },
-      isEmail: {
-        message: "Email введен некорректно",
-      },
-    },
-    password: {
-      isRequired: {
-        message: "Пароль обязателен для заполнения",
-      },
-      isCapitalSymbol: {
-        message: "Пароль должен содержать хотя бы одну заглавную букву",
-      },
-      isContainDigit: {
-        message: "Пароль должен содержать хотя бы одно число",
-      },
-      min: {
-        message: "Пароль должен состоять минимум из 8 символов",
-        value: 8,
-      },
-    },
-  }; */
-
   useEffect(() => {
     validate();
   }, [data]);
 
   const validate = () => {
-    // const errors = validator(data, validatorConfig);
-    // setErrors(errors);
     validateScheme
       .validate(data)
       .then(() => setErrors({}))
