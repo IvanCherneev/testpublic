@@ -10,7 +10,7 @@ const App = () => {
     <div>
       <NavBar />
       <Switch>
-        <Route path="/users/:userId?" component={Users} />
+        <Route path="/users/:userId?/:edit?" component={Users} />
         <Route path="/login/:type?" component={Login} />
         <Route exact path="/" component={Main} />
         <Redirect to="/" />

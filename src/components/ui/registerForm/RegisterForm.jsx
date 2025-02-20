@@ -21,9 +21,23 @@ const RegisterForm = () => {
   const [qualities, setQualities] = useState({});
 
   useEffect(() => {
-    API.professions.fetchAll().then(data => setProfessions(data));
-    API.qualities.fetchAll().then(data => setQualities(data));
-  });
+    API.professions.fetchAll().then((data) => {
+      const professionsList = data.map((item) => ({
+        label: item.name,
+        value: item._id,
+      }));
+      setProfessions(professionsList);
+    });
+
+    API.qualities.fetchAll().then((data) => {
+      const qualitiesList = Object.keys(data).map((optionName) => ({
+        value: data[optionName]._id,
+        label: data[optionName].name,
+        color: data[optionName].color,
+      }));
+      setQualities(qualitiesList);
+    });
+  }, []);
 
   const handleChange = (target) => {
     setData(prevState => ({
@@ -87,7 +101,7 @@ const RegisterForm = () => {
     console.log(errors);
   };
 
-  if (professions && qualities) {
+  if (professions && Object.keys(qualities).length > 0) {
     return (
       <form onSubmit={handleSubmit}>
         <TextField
