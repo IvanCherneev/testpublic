@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { validator } from "../../../utils/validator";
 import API from "../../../api";
-import TextField from "../../common/form/textField/TextField";
-import SelectField from "../../common/form/selectField/SelectField";
-import RadioField from "../../common/form/radioField/RadioField";
-import MultiSelectField from "../../common/form/multiSelectField/MultiSelectField";
+import FormComponent, { SelectField, TextField, RadioField, MultiSelectField } from "../../common/form";
 
 const EditUserPage = () => {
   const { userId } = useParams();
@@ -20,7 +16,6 @@ const EditUserPage = () => {
   });
   const [professions, setProfessions] = useState([]);
   const [qualities, setQualities] = useState([]);
-  const [errors, setErrors] = useState({});
 
   const getProfessionById = (id) => {
     for (const prof of professions) {
@@ -48,11 +43,7 @@ const EditUserPage = () => {
     return qualitiesArray;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const isValid = validate();
-    if (!isValid) return;
+  const handleSubmit = (data) => {
     const { profession, qualities } = data;
 
     API.users
@@ -123,52 +114,29 @@ const EditUserPage = () => {
     },
   };
 
-  useEffect(() => {
-    validate();
-  }, [data]);
-
-  const handleChange = (target) => {
-    setData((prevState) => ({
-      ...prevState,
-      [target.name]: target.value,
-    }));
-  };
-
-  const validate = () => {
-    const errors = validator(data, validatorConfig);
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-  const isValid = Object.keys(errors).length === 0;
-
   return (
     <div className="container mt-5">
       <div className="row">
         <div className="col-md-6 offset-md-3 shadow p-4">
           {!isLoading && professions.length > 0
-            ? <form onSubmit={handleSubmit}>
+            ? <FormComponent
+              onSubmit={handleSubmit}
+              validatorConfig={validatorConfig}
+              defaultData={data}
+            >
               <TextField
                 label="Имя"
                 name="name"
-                value={data.name}
-                onChange={handleChange}
-                error={errors.name}
               />
               <TextField
                 label="Электронная почта"
                 name="email"
-                value={data.email}
-                onChange={handleChange}
-                error={errors.email}
               />
               <SelectField
                 label="Выбери свою профессию"
                 defaultOption="Choose..."
                 options={professions}
                 name="profession"
-                onChange={handleChange}
-                value={data.profession}
-                error={errors.profession}
               />
               <RadioField
                 options={[
@@ -176,26 +144,22 @@ const EditUserPage = () => {
                   { name: "Female", value: "female" },
                   { name: "Other", value: "other" },
                 ]}
-                value={data.sex}
                 name="sex"
-                onChange={handleChange}
                 label="Выберите ваш пол"
               />
               <MultiSelectField
                 defaultValue={data.qualities}
                 options={qualities}
-                onChange={handleChange}
                 name="qualities"
                 label="Выберите ваши качества"
               />
               <button
                 type="submit"
-                disabled={!isValid}
                 className="btn btn-primary w-100 mx-auto"
               >
                 Обновить
               </button>
-            </form>
+            </FormComponent>
             : "Loading..."
           }
         </div>

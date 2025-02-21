@@ -10,13 +10,10 @@ const SelectField = ({ label, value, onChange, defaultOption, options, error, na
     return "form-select" + (error ? " is-invalid" : "");
   };
 
-  console.log("proffesion", options);
   const optionsArray =
     !Array.isArray(options) && typeof options === "object"
       ? Object.values(options)
       : options;
-
-  console.log("proffesion", optionsArray);
 
   return (
     <div className="mb-4">

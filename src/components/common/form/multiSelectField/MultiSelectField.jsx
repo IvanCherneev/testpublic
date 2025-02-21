@@ -12,8 +12,6 @@ const MultiSelectField = ({ options, onChange, name, defaultValue, label }) => {
     onChange({ name, value });
   };
 
-  console.log("qualities", optionsArray);
-
   return (
     <div className="mb-4">
       <label className="form-label">{label}</label>
