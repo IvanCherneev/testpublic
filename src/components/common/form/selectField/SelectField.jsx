@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const SelectField = ({ label, value, onChange, defaultOption, options, error, name }) => {
+const SelectField = ({ label, value, onChange, defaultOption, options, error, name, ...rest }) => {
   const handleChange = ({ target }) => {
     onChange({ name: [target.name], value: target.value });
   };
@@ -24,6 +24,7 @@ const SelectField = ({ label, value, onChange, defaultOption, options, error, na
         name={name}
         value={value}
         onChange={handleChange}
+        {...rest}
       >
         <option disabled value="">{defaultOption}</option>
         {
@@ -53,4 +54,4 @@ SelectField.propTypes = {
   name: PropTypes.string,
 };
 
-export default SelectField;
+export default React.memo(SelectField);

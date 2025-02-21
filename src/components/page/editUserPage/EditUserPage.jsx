@@ -127,6 +127,7 @@ const EditUserPage = () => {
               <TextField
                 label="Имя"
                 name="name"
+                autoFocus
               />
               <TextField
                 label="Электронная почта"
