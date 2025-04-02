@@ -9,7 +9,7 @@ import { BrowserRouter } from "react-router-dom/cjs/react-router-dom.min";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
-  <BrowserRouter basename="/testpublic">
+  <BrowserRouter basename={process.env.PUBLIC_URL}>
     <App />
   </BrowserRouter>
 );
