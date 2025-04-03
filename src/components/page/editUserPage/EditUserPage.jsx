@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import API from "../../../api";
 import FormComponent, { SelectField, TextField, RadioField, MultiSelectField } from "../../common/form";
+import BackHistoryButton from "../../common/backHistoryButton/backHistoryButton";
 
 const EditUserPage = () => {
   const { userId } = useParams();
@@ -116,6 +117,7 @@ const EditUserPage = () => {
 
   return (
     <div className="container mt-5">
+      <BackHistoryButton />
       <div className="row">
         <div className="col-md-6 offset-md-3 shadow p-4">
           {!isLoading && professions.length > 0
