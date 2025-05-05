@@ -15,7 +15,11 @@ module.exports = {
   rules: {
     indent: ["error", 2, { SwitchCase: 1 }],
     semi: [2, "always"],
-    "space-before-function-paren": ["error", "never"],
+    "space-before-function-paren": ["error", {
+      anonymous: "never",
+      named: "never",
+      asyncArrow: "always",
+    }],
     quotes: ["error", "double", { allowTemplateLiterals: true }],
     "comma-dangle": ["error", {
       arrays: "always-multiline",

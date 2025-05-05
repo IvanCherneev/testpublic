@@ -4,6 +4,7 @@ import Table /*, {TableBody, TableHeader} */ from "../../common/table";
 import PropTypes from "prop-types";
 import Qualities from "../qualities";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import Profession from "../profession/Profession";
 
 const UsersTable = ({ users, onSort, selectedSort, onToggleBookMark, onDelete }) => {
   const columns = {
@@ -20,7 +21,7 @@ const UsersTable = ({ users, onSort, selectedSort, onToggleBookMark, onDelete })
         <Qualities qualities={user.qualities} />
       ),
     },
-    professions: { path: "profession.name", name: "Профессия" },
+    professions: { name: "Профессия", component: (user) => <Profession id={user.profession} /> },
     completedMeetings: { path: "completedMeetings", name: "Встретимся, раз" },
     rate: { path: "rate", name: "Оценка" },
     bookmark: {
