@@ -4,6 +4,7 @@ import axios from "axios";
 import userService from "../services/user.service";
 import { toast } from "react-toastify";
 import { setTokens } from "../services/localStorage.service";
+import { randomInt } from "../utils/randomInt";
 
 const httpAuth = axios.create({
   baseURL: "https://identitytoolkit.googleapis.com/v1/",
@@ -53,7 +54,13 @@ const AuthProvider = ({ children }) => {
         returnSecureToken: true,
       });
       setTokens(data);
-      createUser({ _id: data.localId, email, ...rest });
+      createUser({
+        _id: data.localId,
+        email,
+        rate: randomInt(1, 5),
+        completedMeetings: randomInt(0, 200),
+        ...rest,
+      });
     } catch (error) {
       errorCatcher(error);
       const { code, message } = error.response.data.error;
