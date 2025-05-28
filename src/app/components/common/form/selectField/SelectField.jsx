@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const SelectField = ({ label, value, onChange, defaultOption, options, error, name, ...rest }) => {
   const handleChange = ({ target }) => {
-    onChange({ name: [target.name], value: target.value });
+    onChange({ name: target.name, value: target.value });
   };
 
   const getInputClasses = () => {
