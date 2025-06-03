@@ -6,7 +6,7 @@ import Qualities from "../qualities";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Profession from "../profession/Profession";
 
-const UsersTable = ({ users, onSort, selectedSort, onToggleBookMark, onDelete }) => {
+const UsersTable = ({ users, onSort, selectedSort, onToggleBookMark }) => {
   const columns = {
     name: {
       path: "name",
@@ -34,17 +34,6 @@ const UsersTable = ({ users, onSort, selectedSort, onToggleBookMark, onDelete })
         />
       ),
     },
-    delete: {
-      component: (user) => (
-        <button
-          onClick={() => onDelete(user._id)}
-          type="button"
-          className="btn btn-danger"
-        >
-          Delete
-        </button>
-      ),
-    },
   };
 
   return (
@@ -66,7 +55,6 @@ UsersTable.propTypes = {
   onSort: PropTypes.func.isRequired,
   selectedSort: PropTypes.object.isRequired,
   onToggleBookMark: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired,
 };
 
 export default UsersTable;
