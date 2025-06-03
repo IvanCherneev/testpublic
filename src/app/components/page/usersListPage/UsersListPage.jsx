@@ -7,6 +7,7 @@ import { useUser } from "../../../hooks/useUsers";
 import { paginate } from "../../../utils/paginate";
 import _ from "lodash";
 import { useProfessions } from "../../../hooks/useProfession";
+import { useAuth } from "../../../hooks/useAuth";
 
 const UsersListPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,6 +17,7 @@ const UsersListPage = () => {
   const pageSize = 8;
   const { users } = useUser();
   const { isLoading: professionsLoading, professions } = useProfessions();
+  const { currentUser } = useAuth();
 
   const handleDelete = (userId) => {
     // setUsers(users.filter((user) => user._id !== useId));
@@ -54,7 +56,7 @@ const UsersListPage = () => {
     setSearchQuery(target.value);
   };
 
-  if (users) {
+  const filteredUsers = (data) => {
     const filterUsers = searchQuery
       ? users.filter(
         user =>
@@ -66,64 +68,65 @@ const UsersListPage = () => {
         ? users.filter(
           (user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf))
         : users;
+    return filterUsers.filter(user => user._id !== currentUser._id);
+  };
 
-    const count = filterUsers.length;
+  const filterUsers = filteredUsers(users);
 
-    const sortedUsers = _.orderBy(filterUsers, [sortBy.path], [sortBy.order]);
+  const count = filterUsers.length;
 
-    const userCrop = paginate(sortedUsers, currentPage, pageSize);
+  const sortedUsers = _.orderBy(filterUsers, [sortBy.path], [sortBy.order]);
 
-    const clearFilter = () => setSelectedProf();
+  const userCrop = paginate(sortedUsers, currentPage, pageSize);
 
-    return (
-      <div className="d-flex">
-        {professions && !professionsLoading && (
-          <div className="d-flex flex-column flex-shrink-0 p-3">
-            <GroupList
-              selectedItem={selectedProf}
-              items={professions}
-              onItemSelect={handleProfessionSelect}
-            />
-            <button
-              className="btn btn-secondary mt-2"
-              onClick={clearFilter}
-            >
-              Очистить
-            </button>
-          </div>
-        )}
-        <div className="d-flex flex-column">
-          <SearchStatus length={count} />
-          <input
-            type="text"
-            name="seatchQuery"
-            placeholder="Search..."
-            onChange={handleSeachQuery}
-            value={searchQuery}
+  const clearFilter = () => setSelectedProf();
+
+  return (
+    <div className="d-flex">
+      {professions && !professionsLoading && (
+        <div className="d-flex flex-column flex-shrink-0 p-3">
+          <GroupList
+            selectedItem={selectedProf}
+            items={professions}
+            onItemSelect={handleProfessionSelect}
           />
-          {users.length > 0 && (
-            <UsersTable
-              users={userCrop}
-              onSort={handleSort}
-              selectedSort={sortBy}
-              onToggleBookMark={handleToggleBookMark}
-              onDelete={handleDelete}
-            />
-          )}
-          <div className="d-flex justify-content-center">
-            <Pagination
-              itemsCount={count}
-              pageSize={pageSize}
-              currentPage={currentPage}
-              onPageChange={handlePageChange}
-            />
-          </div>
+          <button
+            className="btn btn-secondary mt-2"
+            onClick={clearFilter}
+          >
+            Очистить
+          </button>
+        </div>
+      )}
+      <div className="d-flex flex-column">
+        <SearchStatus length={count} />
+        <input
+          type="text"
+          name="seatchQuery"
+          placeholder="Search..."
+          onChange={handleSeachQuery}
+          value={searchQuery}
+        />
+        {users.length > 0 && (
+          <UsersTable
+            users={userCrop}
+            onSort={handleSort}
+            selectedSort={sortBy}
+            onToggleBookMark={handleToggleBookMark}
+            onDelete={handleDelete}
+          />
+        )}
+        <div className="d-flex justify-content-center">
+          <Pagination
+            itemsCount={count}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
-    );
-  }
-
-  return "Loading...";
+    </div>
+  );
 };
 
 export default UsersListPage;
