@@ -69,6 +69,11 @@ const AuthProvider = ({ children }) => {
         email,
         rate: randomInt(1, 5),
         completedMeetings: randomInt(0, 200),
+        image: `https://avatar.iran.liara.run/public/boy?username=${(
+          Math.random() + 1
+        )
+          .toString(36)
+          .substring(7)}`,
         ...rest,
       });
     } catch (error) {
