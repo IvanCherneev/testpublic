@@ -18,7 +18,7 @@ const UserCard = ({ user }) => {
         </button>
         <div className="d-flex flex-column align-items-center text-center position-relative">
           <img
-            src={`https://api.dicebear.com/9.x/avataaars/svg?seed=Felix`}
+            src={user.image}
             className="rounded-circle"
             width="150"
           />
