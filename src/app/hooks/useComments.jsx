@@ -19,22 +19,33 @@ export const CommentsProvider = ({ children }) => {
   const [comments, setComments] = useState([]);
   const [error, setError] = useState(null);
 
+  const getComments = async () => {
+    try {
+      const { content } = await commentService.getComments(userId);
+      console.log(content);
+      setComments(content);
+    } catch (error) {
+      errorCatcher(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    setComments(null);
-    setLoading(false);
-  }, []);
+    getComments();
+  }, [userId]);
 
   const createComment = async (data) => {
     const comment = {
       ...data,
       _id: nanoid(),
-      ageId: userId,
+      pageId: userId,
       created_at: Date.now(),
       userId: currentUser._id,
     };
     try {
       const { content } = await commentService.createComment(comment);
-      console.log(content);
+      setComments(prevState => [...prevState, content]);
     } catch (error) {
       errorCatcher(error);
     }
