@@ -3,26 +3,33 @@ import React, { useEffect, useState } from "react";
 import API from "../../../api";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import CommentsList, { AddCommentForm } from "../../common/comments";
+import { useComments } from "../../../hooks/useComments";
 
 const Comments = () => {
   const { userId } = useParams();
   const [comments, setComments] = useState([]);
+  const { createComment } = useComments();
+
   useEffect(() => {
     API.comments
       .fetchCommentsForUser(userId)
       .then((data) => setComments(data));
   }, []);
+
   const handleSubmit = (data) => {
-    API.comments
-      .add({ ...data, pageId: userId })
-      .then((data) => setComments([...comments, data]));
+    createComment(data);
+    // API.comments
+    //   .add({ ...data, pageId: userId,  })
+    //   .then((data) => setComments([...comments, data]));
   };
+
   const handleRemoveComment = (id) => {
     API.comments.remove(id).then((id) => {
       setComments(comments.filter((x) => x._id !== id));
     });
   };
   const sortedComments = orderBy(comments, ["created_at"], ["desc"]);
+
   return (
     <>
       <div className="card mb-2">
