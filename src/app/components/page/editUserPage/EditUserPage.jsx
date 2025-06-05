@@ -1,102 +1,97 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import API from "../../../api";
+// import { useParams, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import FormComponent, { SelectField, TextField, RadioField, MultiSelectField } from "../../common/form";
 import BackHistoryButton from "../../common/backHistoryButton/backHistoryButton";
+import { useAuth } from "../../../hooks/useAuth";
+import { useQualities } from "../../../hooks/useQualities";
+import { useProfessions } from "../../../hooks/useProfession";
 
 const EditUserPage = () => {
-  const { userId } = useParams();
-  const history = useHistory();
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState({
-    name: "",
-    email: "",
-    profession: "",
-    sex: "male",
-    qualities: [],
-  });
-  const [professions, setProfessions] = useState([]);
-  const [qualities, setQualities] = useState([]);
+  // const { userId } = useParams();
+  // const history = useHistory();
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState();
+  const { currentUser /* , updateUserData */ } = useAuth();
+  const { qualities, isLoading: qualitiesLoading } = useQualities();
+  const { professions, isLoading: professionLoading } = useProfessions();
+  const qualitiesList = qualities.map(quality => ({
+    label: quality.name,
+    value: quality._id,
+  }));
+  const professionsList = professions.map(profession => ({
+    label: profession.name,
+    value: profession._id,
+  }));
 
-  const getProfessionById = (id) => {
-    for (const prof of professions) {
-      if (prof.value === id) {
-        return { _id: prof.value, name: prof.label };
-      }
-    }
+  // const getProfessionById = (id) => {
+  //   for (const prof of professions) {
+  //     if (prof.value === id) {
+  //       return { _id: prof.value, name: prof.label };
+  //     }
+  //   }
+  // };
+
+  // const getQualities = (elements) => {
+  //   const qualitiesArray = [];
+
+  //   for (const elem of elements) {
+  //     for (const quality in qualities) {
+  //       if (elem.value === qualities[quality].value) {
+  //         qualitiesArray.push({
+  //           _id: qualities[quality].value,
+  //           name: qualities[quality].label,
+  //           color: qualities[quality].color,
+  //         });
+  //       }
+  //     }
+  //   }
+  //   return qualitiesArray;
+  // };
+
+  const handleSubmit = (data) => {
+    // const { profession, qualities } = data;
+
+    // API.users
+    //   .update(userId, {
+    //     ...data,
+    //     profession: getProfessionById(profession),
+    //     qualities: getQualities(qualities),
+    //   })
+    //   .then((data) => history.push(`/users/${data._id}`));
   };
 
-  const getQualities = (elements) => {
+  const getQualitiesListByIds = (qualitiesIds) => {
     const qualitiesArray = [];
-
-    for (const elem of elements) {
-      for (const quality in qualities) {
-        if (elem.value === qualities[quality].value) {
-          qualitiesArray.push({
-            _id: qualities[quality].value,
-            name: qualities[quality].label,
-            color: qualities[quality].color,
-          });
+    for (const qualId of qualitiesIds) {
+      for (const quality of qualities) {
+        if (quality._id === qualId) {
+          qualitiesArray.push(quality);
         }
       }
     }
-
     return qualitiesArray;
   };
 
-  const handleSubmit = (data) => {
-    const { profession, qualities } = data;
-
-    API.users
-      .update(userId, {
-        ...data,
-        profession: getProfessionById(profession),
-        qualities: getQualities(qualities),
-      })
-      .then((data) => history.push(`/users/${data._id}`));
-
-    console.log({
-      ...data,
-      profession: getProfessionById(profession),
-      qualities: getQualities(qualities),
-    });
-  };
-
   const transformData = (data) => {
-    return data.map((qual) => ({ label: qual.name, value: qual._id }));
+    return getQualitiesListByIds(data).map(qual => ({
+      label: qual.name,
+      value: qual._id,
+    }));
   };
 
   useEffect(() => {
-    setIsLoading(true);
-    API.users.getById(userId).then(({ profession, qualities, ...data }) =>
-      setData((prevState) => ({
-        ...prevState,
-        ...data,
-        qualities: transformData(qualities),
-        profession: profession._id,
-      }))
-    );
-
-    API.professions.fetchAll().then((data) => {
-      const professionsList = data.map((item) => ({
-        label: item.name,
-        value: item._id,
-      }));
-      setProfessions(professionsList);
-    });
-
-    API.qualities.fetchAll().then((data) => {
-      const qualitiesList = Object.keys(data).map((optionName) => ({
-        value: data[optionName]._id,
-        label: data[optionName].name,
-        color: data[optionName].color,
-      }));
-      setQualities(qualitiesList);
-    });
-  }, []);
+    if (!professionLoading && !qualitiesLoading && currentUser && !data) {
+      setData({
+        ...currentUser,
+        qualities: transformData(currentUser.qualities),
+      });
+    }
+  }, [professionLoading, qualitiesLoading, currentUser, data]);
 
   useEffect(() => {
-    if (data._id) setIsLoading(false);
+    if (data && isLoading) {
+      setIsLoading(false);
+    }
   }, [data]);
 
   const validatorConfig = {
@@ -138,7 +133,7 @@ const EditUserPage = () => {
               <SelectField
                 label="Выбери свою профессию"
                 defaultOption="Choose..."
-                options={professions}
+                options={professionsList}
                 name="profession"
               />
               <RadioField
@@ -152,7 +147,7 @@ const EditUserPage = () => {
               />
               <MultiSelectField
                 defaultValue={data.qualities}
-                options={qualities}
+                options={qualitiesList}
                 name="qualities"
                 label="Выберите ваши качества"
               />
