@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import { useParams, useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import FormComponent, { SelectField, TextField, RadioField, MultiSelectField } from "../../common/form";
 import BackHistoryButton from "../../common/backHistoryButton/backHistoryButton";
 import { useAuth } from "../../../hooks/useAuth";
@@ -7,11 +7,10 @@ import { useQualities } from "../../../hooks/useQualities";
 import { useProfessions } from "../../../hooks/useProfession";
 
 const EditUserPage = () => {
-  // const { userId } = useParams();
-  // const history = useHistory();
+  const history = useHistory();
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState();
-  const { currentUser /* , updateUserData */ } = useAuth();
+  const { currentUser, updateUserData } = useAuth();
   const { qualities, isLoading: qualitiesLoading } = useQualities();
   const { professions, isLoading: professionLoading } = useProfessions();
   const qualitiesList = qualities.map(quality => ({
@@ -23,41 +22,13 @@ const EditUserPage = () => {
     value: profession._id,
   }));
 
-  // const getProfessionById = (id) => {
-  //   for (const prof of professions) {
-  //     if (prof.value === id) {
-  //       return { _id: prof.value, name: prof.label };
-  //     }
-  //   }
-  // };
+  const handleSubmit = async (data) => {
+    await updateUserData({
+      ...data,
+      qualities: data.qualities.map(quality => quality.value),
+    });
 
-  // const getQualities = (elements) => {
-  //   const qualitiesArray = [];
-
-  //   for (const elem of elements) {
-  //     for (const quality in qualities) {
-  //       if (elem.value === qualities[quality].value) {
-  //         qualitiesArray.push({
-  //           _id: qualities[quality].value,
-  //           name: qualities[quality].label,
-  //           color: qualities[quality].color,
-  //         });
-  //       }
-  //     }
-  //   }
-  //   return qualitiesArray;
-  // };
-
-  const handleSubmit = (data) => {
-    // const { profession, qualities } = data;
-
-    // API.users
-    //   .update(userId, {
-    //     ...data,
-    //     profession: getProfessionById(profession),
-    //     qualities: getQualities(qualities),
-    //   })
-    //   .then((data) => history.push(`/users/${data._id}`));
+    history.push(`/users/${currentUser._id}`);
   };
 
   const getQualitiesListByIds = (qualitiesIds) => {
