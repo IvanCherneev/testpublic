@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import TextField from "../../common/form/textField/TextField";
 import CheckBoxField from "../../common/form/checkBoxField/checkBoxField";
 import * as yup from "yup";
-import { useAuth } from "../../../hooks/useAuth";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useDispatch, useSelector } from "react-redux";
+import { getAuthErrors, logIn } from "../../../store/users";
 
 const LoginForm = () => {
   const [data, setData] = useState({
@@ -11,9 +12,9 @@ const LoginForm = () => {
     password: "",
     stayOn: false,
   });
-  const { signIn } = useAuth();
+  const loginError = useSelector(getAuthErrors());
+  const dispatch = useDispatch();
   const [errors, setErrors] = useState({});
-  const [enterError, setEnterError] = useState(null);
   const history = useHistory();
 
   const handleChange = (target) => {
@@ -21,7 +22,6 @@ const LoginForm = () => {
       ...prevState,
       [target.name]: target.value,
     }));
-    setEnterError(null);
   };
 
   const validateScheme = yup.object().shape({
@@ -42,21 +42,14 @@ const LoginForm = () => {
   };
   const isValid = Object.keys(errors).length === 0;
 
-  const handleSubmit = async (evt) => {
+  const handleSubmit = (evt) => {
     evt.preventDefault();
     const isValid = validate();
     if (!isValid) return;
 
-    try {
-      await signIn(data);
-      history.push(
-        history.location.state
-          ? history.location.state.from.pathname
-          : "/"
-      );
-    } catch (error) {
-      setEnterError(error.message);
-    }
+    const redirect = history.location.state ? history.location.state.from.pathname : "/";
+
+    dispatch(logIn({ payload: data, redirect }));
   };
 
   return (
@@ -86,10 +79,10 @@ const LoginForm = () => {
       >
         Оставаться в системе
       </CheckBoxField>
-      {enterError && <p className="text-danger">{enterError}</p>}
+      {loginError && <p className="text-danger">{loginError}</p>}
       <button
         type="submit"
-        disabled={!isValid || enterError}
+        disabled={!isValid}
         className="btn btn-primary w-100 mx-auto"
       >
         Submit

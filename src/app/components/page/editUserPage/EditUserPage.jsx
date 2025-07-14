@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import FormComponent, { SelectField, TextField, RadioField, MultiSelectField } from "../../common/form";
 import BackHistoryButton from "../../common/backHistoryButton/backHistoryButton";
-import { useAuth } from "../../../hooks/useAuth";
-import { useQualities } from "../../../hooks/useQualities";
-import { useProfessions } from "../../../hooks/useProfession";
+import { useDispatch, useSelector } from "react-redux";
+import { getQualities, getQualitiesLoadingStatus } from "../../../store/qualities";
+import { getProfessions, getProfessionsLoadingStatus } from "../../../store/professions";
+import { getCurrentUserData, updateUser } from "../../../store/users";
 
 const EditUserPage = () => {
-  const history = useHistory();
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState();
-  const { currentUser, updateUserData } = useAuth();
-  const { qualities, isLoading: qualitiesLoading } = useQualities();
-  const { professions, isLoading: professionLoading } = useProfessions();
+  const dispatch = useDispatch();
+  const currentUser = useSelector(getCurrentUserData());
+  const professions = useSelector(getProfessions());
+  const professionLoading = useSelector(getProfessionsLoadingStatus());
+  const qualities = useSelector(getQualities());
+  const qualitiesLoading = useSelector(getQualitiesLoadingStatus());
   const qualitiesList = qualities.map(quality => ({
     label: quality.name,
     value: quality._id,
@@ -22,13 +24,11 @@ const EditUserPage = () => {
     value: profession._id,
   }));
 
-  const handleSubmit = async (data) => {
-    await updateUserData({
+  const handleSubmit = (data) => {
+    dispatch(updateUser({
       ...data,
       qualities: data.qualities.map(quality => quality.value),
-    });
-
-    history.push(`/users/${currentUser._id}`);
+    }));
   };
 
   const getQualitiesListByIds = (qualitiesIds) => {

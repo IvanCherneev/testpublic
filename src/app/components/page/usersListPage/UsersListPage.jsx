@@ -3,11 +3,11 @@ import Pagination from "../../common/pagination/Pagination";
 import GroupList from "../../common/groupList/GroupList";
 import SearchStatus from "../../ui/searchStatus/SearchStatus";
 import UsersTable from "../../ui/usersTable/UsersTable";
-import { useUser } from "../../../hooks/useUsers";
 import { paginate } from "../../../utils/paginate";
 import _ from "lodash";
-import { useProfessions } from "../../../hooks/useProfession";
-import { useAuth } from "../../../hooks/useAuth";
+import { useSelector } from "react-redux";
+import { getProfessions, getProfessionsLoadingStatus } from "../../../store/professions";
+import { getCurrentUserId, getUsersList } from "../../../store/users";
 
 const UsersListPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,9 +15,10 @@ const UsersListPage = () => {
   const [selectedProf, setSelectedProf] = useState();
   const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
   const pageSize = 8;
-  const { users } = useUser();
-  const { isLoading: professionsLoading, professions } = useProfessions();
-  const { currentUser } = useAuth();
+  const users = useSelector(getUsersList());
+  const professions = useSelector(getProfessions());
+  const professionsLoading = useSelector(getProfessionsLoadingStatus());
+  const currentUserId = useSelector(getCurrentUserId());
 
   const handleDelete = (userId) => {
     // setUsers(users.filter((user) => user._id !== useId));
@@ -51,7 +52,8 @@ const UsersListPage = () => {
     setSelectedProf(item);
   };
 
-  const handleSeachQuery = ({ target }) => {
+  const handleSearchQuery = ({ target }) => {
+    console.log(target);
     setSelectedProf(undefined);
     setSearchQuery(target.value);
   };
@@ -68,7 +70,8 @@ const UsersListPage = () => {
         ? users.filter(
           (user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf))
         : users;
-    return filterUsers.filter(user => user._id !== currentUser._id);
+
+    return filterUsers.filter(user => user._id !== currentUserId);
   };
 
   const filterUsers = filteredUsers(users);
@@ -102,9 +105,9 @@ const UsersListPage = () => {
         <SearchStatus length={count} />
         <input
           type="text"
-          name="seatchQuery"
+          name="searchQuery"
           placeholder="Search..."
-          onChange={handleSeachQuery}
+          onChange={handleSearchQuery}
           value={searchQuery}
         />
         {users.length > 0 && (

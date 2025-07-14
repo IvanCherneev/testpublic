@@ -5,13 +5,13 @@ import SelectField from "../../common/form/selectField/SelectField";
 import RadioField from "../../common/form/radioField/RadioField";
 import MultiSelectField from "../../common/form/multiSelectField/MultiSelectField";
 import CheckBoxField from "../../common/form/checkBoxField/checkBoxField";
-import { useQualities } from "../../../hooks/useQualities";
-import { useProfessions } from "../../../hooks/useProfession";
-import { useAuth } from "../../../hooks/useAuth";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useDispatch, useSelector } from "react-redux";
+import { getQualities } from "../../../store/qualities";
+import { getProfessions } from "../../../store/professions";
+import { signUp } from "../../../store/users";
 
 const RegisterForm = () => {
-  const history = useHistory();
+  const dispatch = useDispatch();
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -21,14 +21,13 @@ const RegisterForm = () => {
     qualities: [],
     license: false,
   });
-  const { signUp } = useAuth();
   const [errors, setErrors] = useState({});
-  const { qualities } = useQualities();
+  const qualities = useSelector(getQualities());
   const qualitiesList = qualities.map(quality => ({
     label: quality.name,
     value: quality._id,
   }));
-  const { professions } = useProfessions();
+  const professions = useSelector(getProfessions());
   const professionsList = professions.map(profession => ({
     label: profession.name,
     value: profession._id,
@@ -97,7 +96,7 @@ const RegisterForm = () => {
   };
   const isValid = Object.keys(errors).length === 0;
 
-  const handleSubmit = async (evt) => {
+  const handleSubmit = (evt) => {
     evt.preventDefault();
     const isValid = validate();
     if (!isValid) return;
@@ -105,13 +104,7 @@ const RegisterForm = () => {
       ...data,
       qualities: data.qualities.map(quality => quality.value),
     };
-
-    try {
-      await signUp(newData);
-      history.push("/");
-    } catch (error) {
-      setErrors(error);
-    }
+    dispatch(signUp(newData));
   };
 
   if (professions && Object.keys(qualities).length > 0) {
